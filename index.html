@@ -32,7 +32,7 @@
             <h3>Booking Flights</h3>
             <div class="input-group">
                 <label for="">Flying From</label>
-                <input class="inp-style" type="text" name="" placeholder="Dhake, Bangladesh">
+                <input class="inp-style" type="text" name="" placeholder="Dhaka, Bangladesh">
             </div>
             <div class="input-group">
                 <label for="">Flying To</label>
@@ -51,20 +51,20 @@
             <div class="input-group f-class">
                 <div>
                     <label for="">First Class ($150)</label>
-                    <input class="inp-style inp-width" type="number" name="">
+                    <input id="first-class-amount" class="inp-style inp-width" type="text" value="0">
                 </div>
                 <div class="plus-minus-btn">
-                    <p>+ -</p>
+                    <p class="cursor-style"><span id="first-class-plus">+</span>  <span id="first-class-minus">-</span> </p>
                 </div>
             </div>
             
             <div class="input-group f-class">
                 <div>
                     <label for="">Economy ($100)</label>
-                    <input class="inp-style inp-width" type="number" name="">
+                    <input id="economy-class-amount" class="inp-style inp-width" type="text" value="0">
                 </div>
                 <div class="plus-minus-btn">
-                    <p> <span>+</span> <span>-</span> </p>
+                    <p class="cursor-style"><span id="economy-class-plus">+</span>  <span id="economy-class-minus">-</span></p>
                 </div>
             </div>
             <div class="calculations">
@@ -73,7 +73,7 @@
                         <p>Subtotal</p>
                     </div>
                     <div class="right">
-                        <p>$500</p>
+                        <p>$<span id="subtotal">00</span></p>
                     </div>
                 </div>
 
@@ -82,7 +82,7 @@
                         <p>Charge 10% VAT</p>
                     </div>
                     <div class="right">
-                        <p>$50</p>
+                        <p>$<span id="vat">00</span></p>
                     </div>
                 </div>
                 <hr>
@@ -91,20 +91,112 @@
                         <h4>Total</h4>
                     </div>
                     <div class="right">
-                        <p>$550</p>
+                        <p>$<span id="total">00</span></p>
                     </div>
                 </div>
             </div>
-            <button class="btn-style">Book Now</button>
+            <button id="booking-btn" class="btn-style">Book Now</button>
         </div>
 
-        <div class="booking-content">
+        <div id="booking-area" class="booking-content">
             <h1>discover <br> around the world</h1>
             <p>Lorem ipsum dolor sit amet consectetur adipisicingelit. Provident voluptatibus quam fuga laborumalias veniam libero autem quasi maxime ullam vero nama imi dolor, architecto ab facilis eaque deserunt nobise voluptatibus quam</p>
         </div>
+
+        <div id="confirmation-area">
+            <h1>Thank you for Flying with Air-Asia.</h1>
+            <p>You've Purchased total $<span id="purchased-ticket"></span>.</p>
+        </div>
+
     </section>
 
-    <!--Thank You-->
+    
+
+    <script>
+       
+
+        document.getElementById('first-class-plus').addEventListener('click',function(){       
+            ticketUpdate("first-class-amount",true,150);        
+        })
+
+        document.getElementById('first-class-minus').addEventListener('click',function(){
+            ticketUpdate("first-class-amount",false,150);       
+        })
+
+        document.getElementById('economy-class-plus').addEventListener('click',function(){
+            ticketUpdate("economy-class-amount",true,100);
+        })
+        document.getElementById('economy-class-minus').addEventListener('click',function(){
+            ticketUpdate("economy-class-amount",false,100);
+        })
+
+
+        function ticketUpdate(inputId,isIncrease,ticketPrice){
+
+            const TicketInput = document.getElementById(inputId).value; 
+            const TicketNumber = parseInt(TicketInput);
+
+            const vat = document.getElementById("vat").innerText;
+            const vatNumber = parseFloat(vat);
+
+            const subTotalInput = document.getElementById("subtotal").innerText;
+            const subTotalNumber = parseInt(subTotalInput);
+
+            const total = document.getElementById("total").innerText;
+            const totalNumber = parseFloat(total);
+
+            let TicketIncrease=0; //because the value is gonna change
+            let subTotalAmount = 0;
+            let vatAmount = 0;
+            let totalAmount = 0;
+
+            if(TicketNumber<0 || TicketNumber==-1){
+                alert("Ticket amount can't be less than zero");
+                setToZero();
+                
+            }else{
+            if(isIncrease == true){
+                TicketIncrease = TicketNumber +1;
+                subTotalAmount = (ticketPrice  * TicketIncrease);
+                vatAmount = subTotalAmount* .1;
+                totalAmount = subTotalAmount+vatAmount;
+            }else if(isIncrease == false){
+                TicketIncrease = TicketNumber -1;
+                subTotalAmount = subTotalNumber - ticketPrice ;
+                vatAmount = subTotalAmount* .1;
+                totalAmount = subTotalAmount+vatAmount;               
+            }           
+            document.getElementById(inputId).value = TicketIncrease;
+            document.getElementById("subtotal").innerText = subTotalAmount;
+            document.getElementById("vat").innerText = vatAmount;
+            document.getElementById("total").innerText = totalAmount;
+        }
+    }
+        //Book Now Button
+        document.getElementById("booking-btn").addEventListener('click',function(){
+            const totalPurchase = document.getElementById("total").innerText;
+            const totalPurchaseNumber = parseInt(totalPurchase);
+            if(totalPurchase==0){
+                alert("Book a ticket");
+            }else{
+            const bookingArea = document.getElementById("booking-area");
+            bookingArea.style.display = "none";
+            const confirmationArea = document.getElementById("confirmation-area");
+            confirmationArea.style.display = "block";
+            document.getElementById("purchased-ticket").innerText = totalPurchase;
+
+            }
+            
+        })
+
+        function setToZero(){      
+            document.getElementById("first-class-amount").value = 0;
+            document.getElementById("second-class-amount").value = 0;
+            document.getElementById("subtotal").innerText = 0;
+            document.getElementById("vat").innerText = 0;
+            document.getElementById("total").innerText = 0; 
+        }
+    </script>
 </body>
 
 </html>
