@@ -51,20 +51,20 @@
             <div class="input-group f-class">
                 <div>
                     <label for="">First Class ($150)</label>
-                    <input id="first-class-amount" class="inp-style inp-width" type="text" value="0">
+                    <input id="first-class-amount" class="inp-style inp-width" type="text" value="0" readonly>
                 </div>
                 <div class="plus-minus-btn">
-                    <p class="cursor-style"><span id="first-class-plus">+</span>  <span id="first-class-minus">-</span> </p>
+                    <p class="cursor-style"> <span id="first-class-minus">-</span> <span id="first-class-plus">+</span></p>
                 </div>
             </div>
             
             <div class="input-group f-class">
                 <div>
                     <label for="">Economy ($100)</label>
-                    <input id="economy-class-amount" class="inp-style inp-width" type="text" value="0">
+                    <input id="economy-class-amount" class="inp-style inp-width" type="text" value="0" readonly>
                 </div>
                 <div class="plus-minus-btn">
-                    <p class="cursor-style"><span id="economy-class-plus">+</span>  <span id="economy-class-minus">-</span></p>
+                    <p class="cursor-style"><span id="economy-class-minus">-</span> <span id="economy-class-plus">+</span></p>
                 </div>
             </div>
             <div class="calculations">
@@ -105,7 +105,9 @@
 
         <div id="confirmation-area">
             <h1>Thank you for Flying with Air-Asia.</h1>
-            <p>You've Purchased total $<span id="purchased-ticket"></span>.</p>
+            <p>You've Purchased total = $<span id="purchased-ticket"></span>.</p>
+            <p>Your First class ticket amount = <span id="first-ticket"></span> </p>
+            <p>Your Economy class ticket amount = <span id="economy-ticket"></span> </p>
         </div>
 
     </section>
@@ -132,70 +134,77 @@
 
 
         function ticketUpdate(inputId,isIncrease,ticketPrice){
-
             const TicketInput = document.getElementById(inputId).value; 
             const TicketNumber = parseInt(TicketInput);
-
-            const vat = document.getElementById("vat").innerText;
-            const vatNumber = parseFloat(vat);
-
-            const subTotalInput = document.getElementById("subtotal").innerText;
-            const subTotalNumber = parseInt(subTotalInput);
-
-            const total = document.getElementById("total").innerText;
-            const totalNumber = parseFloat(total);
-
-            let TicketIncrease=0; //because the value is gonna change
-            let subTotalAmount = 0;
-            let vatAmount = 0;
-            let totalAmount = 0;
-
-            if(TicketNumber<0 || TicketNumber==-1){
-                alert("Ticket amount can't be less than zero");
-                setToZero();
-                
-            }else{
+            let TicketIncrease=TicketNumber; //because the value is gonna change           
+           
             if(isIncrease == true){
-                TicketIncrease = TicketNumber +1;
-                subTotalAmount = (ticketPrice  * TicketIncrease);
-                vatAmount = subTotalAmount* .1;
-                totalAmount = subTotalAmount+vatAmount;
-            }else if(isIncrease == false){
-                TicketIncrease = TicketNumber -1;
-                subTotalAmount = subTotalNumber - ticketPrice ;
-                vatAmount = subTotalAmount* .1;
-                totalAmount = subTotalAmount+vatAmount;               
-            }           
+                TicketIncrease = TicketNumber +1;              
+            }
+            if(isIncrease == false && TicketNumber > 0){
+                TicketIncrease = TicketNumber -1;               
+            }   
+            
             document.getElementById(inputId).value = TicketIncrease;
-            document.getElementById("subtotal").innerText = subTotalAmount;
-            document.getElementById("vat").innerText = vatAmount;
-            document.getElementById("total").innerText = totalAmount;
-        }
+            disPlayArea("none","block");
+            calculateTotal();
     }
         //Book Now Button
         document.getElementById("booking-btn").addEventListener('click',function(){
             const totalPurchase = document.getElementById("total").innerText;
-            const totalPurchaseNumber = parseInt(totalPurchase);
+            const firstClassTicket = document.getElementById("first-class-amount").value;
+            const economyClassTicket = document.getElementById("economy-class-amount").value;
             if(totalPurchase==0){
                 alert("Book a ticket");
             }else{
-            const bookingArea = document.getElementById("booking-area");
-            bookingArea.style.display = "none";
-            const confirmationArea = document.getElementById("confirmation-area");
-            confirmationArea.style.display = "block";
+            disPlayArea("block","none");
             document.getElementById("purchased-ticket").innerText = totalPurchase;
-
-            }
-            
+            document.getElementById("first-ticket").innerText=firstClassTicket;
+            document.getElementById("economy-ticket").innerText=economyClassTicket;
+            setEverythingToZero();
+            }           
         })
 
-        function setToZero(){      
-            document.getElementById("first-class-amount").value = 0;
-            document.getElementById("second-class-amount").value = 0;
-            document.getElementById("subtotal").innerText = 0;
-            document.getElementById("vat").innerText = 0;
-            document.getElementById("total").innerText = 0; 
+        function calculateTotal(){
+            const firstClassTicketAmount = document.getElementById("first-class-amount").value;
+            const firstClassTicketNumber = parseInt(firstClassTicketAmount);
+
+            const economyClassTicketAmount = document.getElementById("economy-class-amount").value;
+            const economyClassTicketNumber = parseInt(economyClassTicketAmount);
+
+            let vatAmount = 0;
+            let totalPrice = 0;
+            //const vat = document.getElementById("vat").innerText;
+            //const vatNumber = parseFloat(vat);
+
+            let subTotalPrice = (150*firstClassTicketNumber)+(100*economyClassTicketNumber);
+            document.getElementById("subtotal").innerText=subTotalPrice;
+
+            vatAmount = subTotalPrice * .1;
+            totalPrice = subTotalPrice+vatAmount;
+
+            document.getElementById("vat").innerText=vatAmount;
+            document.getElementById("total").innerText=totalPrice;
+            
+
         }
+
+        //showing the confirmed/purchased ticket amounts
+        function disPlayArea(confirmDisplay,bookDisplay){
+            const confirmationArea = document.getElementById("confirmation-area");      
+            const bookingArea = document.getElementById("booking-area");  
+            bookingArea.style.display =  bookDisplay;
+            confirmationArea.style.display =  confirmDisplay;
+        }
+
+        function setEverythingToZero(){      
+        document.getElementById("first-class-amount").value = 00;
+        document.getElementById("economy-class-amount").value = 00;
+        document.getElementById("subtotal").innerText = 00;
+        document.getElementById("vat").innerText = 00;
+        document.getElementById("total").innerText = 00; 
+        }
+       
     </script>
 </body>
 
